@@ -56,6 +56,7 @@ public class PetDbHelper extends SQLiteOpenHelper {
                 + PetEntry.COLUMN_PET_NAME + " TEXT NOT NULL, "
                 + PetEntry.COLUMN_PET_BREED + " TEXT, "
                 + PetEntry.COLUMN_PET_GENDER + " INTEGER NOT NULL, "
+                + PetEntry.COLUMN_PRICE + " DECIMAL, "
                 + PetEntry.COLUMN_STOCK + " INTEGER NOT NULL DEFAULT 0, "
                 + PetEntry.COLUMN_PRODUCT_PIC + " BLOB NOT NULL);";
 

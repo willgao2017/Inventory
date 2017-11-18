@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
 import com.example.android.inventory.data.PetContract.PetEntry;
 
 import static android.R.attr.id;
@@ -82,20 +81,24 @@ public class PetCursorAdapter extends CursorAdapter {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
         TextView summaryTextView = (TextView) view.findViewById(R.id.summary);
+        TextView priceTextView = (TextView) view.findViewById(R.id.price);
+
 
         Button mSale = (Button) view.findViewById(R.id.sale);
 
         // Find the columns of pet attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME);
         int stockColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_STOCK);
-        int idColumIndex = cursor.getColumnIndex(PetEntry._ID);
+        int priceColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PRICE);
+        int idColumnIndex = cursor.getColumnIndex(PetEntry._ID);
 
         // Read the pet attributes from the Cursor for the current pet
         String productName = cursor.getString(nameColumnIndex);
         String productStock = cursor.getString(stockColumnIndex);
+        String productPrice = cursor.getString(priceColumnIndex);
 
         final int stock = cursor.getInt(stockColumnIndex);
-        final int itemId = cursor.getInt(idColumIndex);
+        final int itemId = cursor.getInt(idColumnIndex);
 
         // If the pet breed is empty string or null, then use some default text
         // that says "Unknown breed", so the TextView isn't blank.
@@ -105,7 +108,8 @@ public class PetCursorAdapter extends CursorAdapter {
 
         // Update the TextViews with the attributes for the current pet
         nameTextView.setText(productName);
-        summaryTextView.setText(productStock);
+        summaryTextView.setText(productStock + " in stock");
+        priceTextView.setText(productPrice + " USD");
 
 
         mSale.setOnClickListener(new View.OnClickListener() {
@@ -113,14 +117,16 @@ public class PetCursorAdapter extends CursorAdapter {
             public void onClick(View view) {
 
                 int stockx = stock;
-                stockx--;
+                if (stockx > 0) {
+                    stockx--;
 
-                int itemIdx = itemId;
+                    int itemIdx = itemId;
 
-                ContentValues values = new ContentValues();
-                values.put(PetEntry.COLUMN_STOCK, stockx);
-                Context contextX = context;
-                int rowsAffected = contextX.getContentResolver().update(ContentUris.withAppendedId(PetEntry.CONTENT_URI, itemIdx), values, null, null);
+                    ContentValues values = new ContentValues();
+                    values.put(PetEntry.COLUMN_STOCK, stockx);
+                    Context contextX = context;
+                    int rowsAffected = contextX.getContentResolver().update(ContentUris.withAppendedId(PetEntry.CONTENT_URI, itemIdx), values, null, null);
+                }
 
             }
         });

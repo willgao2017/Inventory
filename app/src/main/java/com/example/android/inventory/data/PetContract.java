@@ -113,6 +113,11 @@ public final class PetContract {
          */
         public final static String COLUMN_STOCK = "weight";
 
+
+        public final static String COLUMN_PRICE = "price";
+
+
+
         /**
          * Possible values for the gender of the pet.
          */

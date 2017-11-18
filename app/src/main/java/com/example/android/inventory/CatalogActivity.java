@@ -161,7 +161,8 @@ public class CatalogActivity extends AppCompatActivity implements
         String[] projection = {
                 PetEntry._ID,
                 PetEntry.COLUMN_PET_NAME,
-                PetEntry.COLUMN_STOCK };
+                PetEntry.COLUMN_STOCK,
+        PetEntry.COLUMN_PRICE};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context

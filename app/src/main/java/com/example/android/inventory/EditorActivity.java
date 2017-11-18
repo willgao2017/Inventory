@@ -93,6 +93,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private TextView mStockText;
 
+    private TextView mPriceEditText;
+
     /**
      * EditText field to enter the pet's gender
      */
@@ -166,6 +168,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mBreedEditText = (EditText) findViewById(R.id.edit_pet_breed);
         mByEditText = (EditText) findViewById(R.id.edit_mod_by);
         mGenderSpinner = (Spinner) findViewById(R.id.spinner_gender);
+
+        mPriceEditText = (EditText) findViewById(R.id.edit_pet_price);
+
 
         mStockText = (TextView) findViewById(R.id.quantity_remains);
 
@@ -242,6 +247,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String ByString = mByEditText.getText().toString().trim();
         String StockString = mStockText.getText().toString().trim();
 
+        String priceString = mPriceEditText.getText().toString().trim();
+
+
 
         // Check if this is supposed to be a new pet
         // and check if all the fields in the editor are blank
@@ -259,6 +267,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(PetEntry.COLUMN_PET_NAME, nameString);
         values.put(PetEntry.COLUMN_PET_BREED, breedString);
         values.put(PetEntry.COLUMN_PET_GENDER, mGender);
+
+        values.put(PetEntry.COLUMN_PRICE, priceString);
+
+
         // If the weight is not provided by the user, don't try to parse the string into an
         // integer value. Use 0 by default.
         int stock = 0;
@@ -267,7 +279,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 if (mGender == 0)
                     stock = Integer.parseInt(StockString) + Integer.parseInt(ByString);
                 else
-                    stock = Integer.parseInt(StockString) - Integer.parseInt(ByString);
+                    if (Integer.parseInt(StockString) >= Integer.parseInt(ByString))
+                        stock = Integer.parseInt(StockString) - Integer.parseInt(ByString);
+                else
+                        Toast.makeText(this, "No so many in stock",
+                                Toast.LENGTH_SHORT).show();
             } else
                 stock = Integer.parseInt(StockString);
         } else if (!TextUtils.isEmpty(ByString))
@@ -423,6 +439,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 PetEntry.COLUMN_PET_NAME,
                 PetEntry.COLUMN_PET_BREED,
                 PetEntry.COLUMN_PET_GENDER,
+                PetEntry.COLUMN_PRICE,
                 PetEntry.COLUMN_STOCK,
                 PetEntry.COLUMN_PRODUCT_PIC};
 
@@ -450,6 +467,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             int breedColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED);
             int genderColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
             int stockColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_STOCK);
+            int priceColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PRICE);
+
+
 
             int picColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PRODUCT_PIC);
 
@@ -459,6 +479,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             String breed = cursor.getString(breedColumnIndex);
             int gender = cursor.getInt(genderColumnIndex);
             int stock = cursor.getInt(stockColumnIndex);
+
+            float price = cursor.getFloat(priceColumnIndex);
+
 
             byte[] image = cursor.getBlob(picColumnIndex);
             Bitmap bmp = BitmapFactory.decodeByteArray(image, 0, image.length);
@@ -470,6 +493,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             mNameEditText.setText(name);
             mBreedEditText.setText(breed);
             mStockText.setText(Integer.toString(stock));
+            mPriceEditText.setText(Float.toString(price));
+
 
             // Gender is a dropdown spinner, so map the constant value from the database
             // into one of the dropdown options (0 is Unknown, 1 is Male, 2 is Female).
