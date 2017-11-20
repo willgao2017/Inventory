@@ -106,6 +106,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      */
     private int mGender;
 
+    private Button mOrderMore;
+
     /**
      * Boolean flag that keeps track of whether the pet has been edited (true) or not (false)
      */
@@ -173,6 +175,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
 
         mStockText = (TextView) findViewById(R.id.quantity_remains);
+        mOrderMore = (Button) findViewById(R.id.order_more);
+        mOrderMore.setOnClickListener(this);
 
         // Setup OnTouchListeners on all the input fields, so we can determine if the user
         // has touched or modified them. This will let us know if there are unsaved changes
@@ -635,6 +639,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                         })
                         .show();
                 break;
+
+            case R.id.order_more: {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Udacity shop needs more of your products" );
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
+            }
 
         }
     }
