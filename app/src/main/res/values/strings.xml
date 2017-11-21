@@ -77,24 +77,19 @@
     <!-- Label for overview category of attributes in the editor [CHAR LIMIT=30] -->
     <string name="category_overview">Overview</string>
 
-    <!-- Label for gender information in the editor [CHAR LIMIT=30] -->
-    <string name="category_gender">Gender</string>
-
     <!-- Label for measurement information in the editor [CHAR LIMIT=30] -->
     <string name="modification_by">By</string>
 
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
     <string name="hint_product_name">Name</string>
 
-    <!-- Text hint for breed field in the editor [CHAR LIMIT=30] -->
-    <string name="hint_product_breed">Provider Name</string>
+    <string name="hint_product_provider">Provider Name</string>
 
     <!-- Text hint for name field in the editor [CHAR LIMIT=30] -->
     <string name="hint_product_weight">(+/-)</string>
 
-
-
     <string name="hint_product_price">Product_price</string>
+
     <string name="hint_product_quantity">Product_quantity</string>
 
 
@@ -107,14 +102,10 @@
 
     <string name="unit_product_price">USD</string>
 
+    <string name="cal_sub">Increase</string>
 
-    <!-- Label for dropdown menu option if the product's gender is unknown [CHAR LIMIT=20] -->
-    <string name="gender_unknown">Increase</string>
-
-    <!-- Label for dropdown menu option if the product is male [CHAR LIMIT=20] -->
     <string name="cal_add">Decrease</string>
 
-    <!-- Label for the product's breed if the breed is unknown [CHAR LIMIT=20] -->
     <string name="unknown_price">Unknown price</string>
 
 

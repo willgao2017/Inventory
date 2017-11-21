@@ -196,14 +196,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
-        ArrayAdapter genderSpinnerAdapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter calSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.array_cal_options, android.R.layout.simple_spinner_item);
 
         // Specify dropdown layout style - simple list view with 1 item per line
-        genderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        calSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
         // Apply the adapter to the spinner
-        mCalSpinner.setAdapter(genderSpinnerAdapter);
+        mCalSpinner.setAdapter(calSpinnerAdapter);
 
         // Set the integer mSelected to the constant values
         mCalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -614,7 +614,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                                         startActivityForResult(intent, CAPTURE_PHOTO);
                                         break;
                                     case 2:
-                                        profileImageView.setImageResource(R.drawable.ic_account_circle_black);
+                                        profileImageView.setImageResource(R.drawable.ic_add_pic);
                                         break;
                                 }
                             }
