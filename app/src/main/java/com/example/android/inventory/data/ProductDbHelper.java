@@ -19,14 +19,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.android.inventory.data.PetContract.PetEntry;
+import com.example.android.inventory.data.ProductContract.ProductEntry;
 
 /**
  * Database helper for Pets app. Manages database creation and version management.
  */
-public class PetDbHelper extends SQLiteOpenHelper {
+public class ProductDbHelper extends SQLiteOpenHelper {
 
-    public static final String LOG_TAG = PetDbHelper.class.getSimpleName();
+    public static final String LOG_TAG = ProductDbHelper.class.getSimpleName();
 
     /** Name of the database file */
     private static final String DATABASE_NAME = "shelter.db";
@@ -37,11 +37,11 @@ public class PetDbHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     /**
-     * Constructs a new instance of {@link PetDbHelper}.
+     * Constructs a new instance of {@link ProductDbHelper}.
      *
      * @param context of the app
      */
-    public PetDbHelper(Context context) {
+    public ProductDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -51,14 +51,14 @@ public class PetDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Create a String that contains the SQL statement to create the inventory table
-        String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + PetEntry.TABLE_NAME + " ("
-                + PetEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + PetEntry.COLUMN_PET_NAME + " TEXT NOT NULL, "
-                + PetEntry.COLUMN_PET_BREED + " TEXT, "
-                + PetEntry.COLUMN_PET_GENDER + " INTEGER NOT NULL, "
-                + PetEntry.COLUMN_PRICE + " DECIMAL, "
-                + PetEntry.COLUMN_STOCK + " INTEGER NOT NULL DEFAULT 0, "
-                + PetEntry.COLUMN_PRODUCT_PIC + " BLOB NOT NULL);";
+        String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + ProductContract.ProductEntry.TABLE_NAME + " ("
+                + ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ProductContract.ProductEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
+                + ProductContract.ProductEntry.COLUMN_PRODUCT_PROVIDER + " TEXT, "
+                + ProductContract.ProductEntry.COLUMN_PRODUCT_CAL + " INTEGER NOT NULL, "
+                + ProductContract.ProductEntry.COLUMN_PRICE + " DECIMAL, "
+                + ProductContract.ProductEntry.COLUMN_STOCK + " INTEGER NOT NULL DEFAULT 0, "
+                + ProductContract.ProductEntry.COLUMN_PRODUCT_PIC + " BLOB NOT NULL);";
 
         // Execute the SQL statement
         db.execSQL(SQL_CREATE_PETS_TABLE);

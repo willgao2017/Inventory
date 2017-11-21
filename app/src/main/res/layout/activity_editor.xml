@@ -49,15 +49,15 @@
 
             <!-- Name field -->
             <EditText
-                android:id="@+id/edit_pet_name"
-                android:hint="@string/hint_pet_name"
+                android:id="@+id/edit_product_name"
+                android:hint="@string/hint_product_name"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
             <!-- Breed field -->
             <EditText
-                android:id="@+id/edit_pet_breed"
-                android:hint="@string/hint_pet_breed"
+                android:id="@+id/edit_product_provider"
+                android:hint="@string/hint_product_breed"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
@@ -70,15 +70,15 @@
 
                 <!-- Weight field -->
                 <EditText
-                    android:id="@+id/edit_pet_price"
-                    android:hint="@string/hint_pet_price"
+                    android:id="@+id/edit_product_price"
+                    android:hint="@string/hint_product_price"
                     android:inputType="numberDecimal"
                     style="@style/EditorFieldStyle" />
 
                 <!-- Units for weight (kg) -->
                 <TextView
                     android:id="@+id/label_price_units"
-                    android:text="@string/unit_pet_price"
+                    android:text="@string/unit_product_price"
                     style="@style/EditorUnitsStyle"/>
             </RelativeLayout>
 
@@ -124,7 +124,7 @@
 
             <!-- Gender drop-down spinner -->
             <Spinner
-                android:id="@+id/spinner_gender"
+                android:id="@+id/spinner_cal"
                 android:layout_height="48dp"
                 android:layout_width="wrap_content"
                 android:paddingRight="16dp"
@@ -132,7 +132,7 @@
 
             <EditText
                 android:id="@+id/edit_mod_by"
-                android:hint="@string/hint_pet_weight"
+                android:hint="@string/hint_product_weight"
                 android:inputType="number"
                 style="@style/EditorFieldStyle" />
 
