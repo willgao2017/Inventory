@@ -19,9 +19,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
-import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -88,11 +86,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private EditText mByEditText;
 
     private EditText mStockEditText;
-
     private TextView mPriceEditText;
-
-    private int mCal;
-
     private Button mOrderMore;
     private Button mInc;
     private Button mDec;
@@ -104,7 +98,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     Boolean low_stock = false;
 
-
     private ImageView profileImageView;
     private static final int SELECT_PHOTO = 1;
     private static final int CAPTURE_PHOTO = 2;
@@ -112,7 +105,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private int progressBarStatus = 0;
     private Handler progressBarbHandler = new Handler();
     Bitmap thumbnail;
-
 
     /**
      * OnTouchListener that listens for any user touches on a View, implying that they are modifying
@@ -158,14 +150,15 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mNameEditText = (EditText) findViewById(R.id.edit_product_name);
         mProviderEditText = (EditText) findViewById(R.id.edit_product_provider);
         mByEditText = (EditText) findViewById(R.id.edit_mod_by);
+        mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
+        mStockEditText = (EditText) findViewById(R.id.quantity_remains);
+
         mInc = (Button) findViewById(R.id.increase_bu);
         mInc.setOnClickListener(this);
 
         mDec = (Button) findViewById(R.id.decrease_bu);
         mDec.setOnClickListener(this);
 
-        mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
-        mStockEditText = (EditText) findViewById(R.id.quantity_remains);
         mOrderMore = (Button) findViewById(R.id.order_more);
         mOrderMore.setOnClickListener(this);
 
@@ -175,12 +168,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mNameEditText.setOnTouchListener(mTouchListener);
         mProviderEditText.setOnTouchListener(mTouchListener);
         mByEditText.setOnTouchListener(mTouchListener);
-        // // //mCalSpinner.setOnTouchListener(mTouchListener);
-
-        // // // setupSpinner();
 
         profileImageView = (ImageView) findViewById(R.id.profileImageView);
-
         profileImageView.setOnClickListener(this);
 
         if (ContextCompat.checkSelfPermission(EditorActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -190,49 +179,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             profileImageView.setEnabled(true);
         }
     }
-
-
-    /**
-     * Setup the dropdown spinner that allows the user to select the changing direction the stock.
-     */
-
-        /*
-
-    private void setupSpinner() {
-        // Create adapter for spinner. The list options are from the String array it will use
-        // the spinner will use the default layout
-        ArrayAdapter calSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_cal_options, android.R.layout.simple_spinner_item);
-
-        // Specify dropdown layout style - simple list view with 1 item per line
-        calSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-
-        // Apply the adapter to the spinner
-        mCalSpinner.setAdapter(calSpinnerAdapter);
-
-        // Set the integer mSelected to the constant values
-        mCalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selection = (String) parent.getItemAtPosition(position);
-                if (!TextUtils.isEmpty(selection)) {
-                    if (selection.equals(getString(R.string.cal_add))) {
-                        mCal = 1;
-                    } else {
-                        mCal = 0;
-                    }
-                }
-            }
-
-            // Because AdapterView is an abstract class, onNothingSelected must be defined
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                mCal = ProductContract.ProductEntry.QUANTITY_INCREASE;
-            }
-        });
-    }
-
-    */
 
     /**
      * Get user input from editor and save product into database.
@@ -244,8 +190,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         String providerString = mProviderEditText.getText().toString().trim();
         String StockString = mStockEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
-        //String ByString = mByEditText.getText().toString().trim();
-
 
         // Check if this is supposed to be a new product
         // and check if all the fields in the editor are blank
@@ -260,72 +204,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, nameString);
         values.put(ProductEntry.COLUMN_PRODUCT_PROVIDER, providerString);
-        //values.put(ProductEntry.COLUMN_PRODUCT_CAL, mCal);
         values.put(ProductEntry.COLUMN_PRICE, priceString);
-
-/*
-        int stock = 0;
-        Boolean low_stock = false;
-        if (!TextUtils.isEmpty(StockString)) {
-            if (!TextUtils.isEmpty(ByString)) {
-                if (mCal == 0)
-                    stock = Integer.parseInt(StockString) + Integer.parseInt(ByString);
-                else {
-                    if (Integer.parseInt(StockString) >= Integer.parseInt(ByString))
-                        stock = Integer.parseInt(StockString) - Integer.parseInt(ByString);
-                    else {
-                        low_stock = true;
-                        stock = Integer.parseInt(StockString);
-                    }
-                }
-            } else
-                stock = Integer.parseInt(StockString);
-        } else {
-            if (!TextUtils.isEmpty(ByString))
-                if (mCal == 0)
-                    stock = Integer.parseInt(ByString);
-                else
-                    low_stock = true;
-        }
-        */
 
         int stock = 0;
         if (!TextUtils.isEmpty(StockString)) {
             stock = Integer.parseInt(StockString);
         }
         values.put(ProductEntry.COLUMN_STOCK, stock);
-
-
-/*
-        int stock = Integer.parseInt(StockString);
-        Boolean low_stock = false;
-
-
-        if (!TextUtils.isEmpty(StockString)) {
-            if (!TextUtils.isEmpty(ByString)) {
-                if (mCal == 0)
-                    stock = Integer.parseInt(StockString) + Integer.parseInt(ByString);
-                else {
-                    if (Integer.parseInt(StockString) >= Integer.parseInt(ByString))
-                        stock = Integer.parseInt(StockString) - Integer.parseInt(ByString);
-                    else {
-                        low_stock = true;
-                        stock = Integer.parseInt(StockString);
-                    }
-                }
-            } else
-                stock = Integer.parseInt(StockString);
-        } else {
-            if (!TextUtils.isEmpty(ByString))
-                if (mCal == 0)
-                    stock = Integer.parseInt(ByString);
-                else
-                    low_stock = true;
-        }
-        values.put(ProductEntry.COLUMN_STOCK, Integer.parseInt(StockString));
-
-        */
-
 
         profileImageView.setDrawingCacheEnabled(true);
         profileImageView.buildDrawingCache();
@@ -372,7 +257,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                     Toast.makeText(this, getString(R.string.editor_update_product_successful), Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(this, "not so many in stock", Toast.LENGTH_SHORT).show();
-
             }
         }
     }
@@ -478,7 +362,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 ProductEntry._ID,
                 ProductEntry.COLUMN_PRODUCT_NAME,
                 ProductEntry.COLUMN_PRODUCT_PROVIDER,
-                //ProductEntry.COLUMN_PRODUCT_CAL,
                 ProductEntry.COLUMN_PRICE,
                 ProductEntry.COLUMN_STOCK,
                 ProductEntry.COLUMN_PRODUCT_PIC};
@@ -505,11 +388,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Find the columns of product attributes that we're interested in
             int nameColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
             int providerColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PROVIDER);
-            //int calColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_CAL);
             int stockColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_STOCK);
             int priceColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRICE);
             int picColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_PIC);
-
 
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString(nameColumnIndex);
@@ -522,23 +403,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             profileImageView.setImageBitmap(Bitmap.createScaledBitmap(bmp, 200,
                     200, false));
 
-
             // Update the views on the screen with the values from the database
             mNameEditText.setText(name);
             mProviderEditText.setText(provider);
             mStockEditText.setText(Integer.toString(stock));
             mPriceEditText.setText(Float.toString(price));
-
-            /*
-            switch (cal) {
-                case QUANTITY_DECREASE:
-                    mCalSpinner.setSelection(1);
-                    break;
-                default:
-                    mCalSpinner.setSelection(0);
-                    break;
-            }
-            */
         }
     }
 
@@ -548,8 +417,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mNameEditText.setText("");
         mProviderEditText.setText("");
         mStockEditText.setText("");
-
-        //mCalSpinner.setSelection(0);
     }
 
     /**
@@ -641,10 +508,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
-
             case R.id.profileImageView:
-                Toast.makeText(this, "picpicpicpicpicpicpicpicpicpic",
-                        Toast.LENGTH_SHORT).show();
                 new MaterialDialog.Builder(this)
                         .title(R.string.uploadImages)
                         .items(R.array.uploadImages)
@@ -672,9 +536,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 break;
 
             case R.id.order_more:
-                Toast.makeText(this, "??????????????????",
-                        Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("mailto:")); // only email apps should handle this
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Udacity shop needs more of your " + mNameEditText.getText().toString().trim());
@@ -684,47 +545,39 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 break;
 
             case R.id.increase_bu:
-                Toast.makeText(this, "++++++++++++++++",
-                        Toast.LENGTH_SHORT).show();
                 String StockString01 = mStockEditText.getText().toString().trim();
-                int stocko01 = 0;
+                int stockOrigin01 = 0;
                 if (!TextUtils.isEmpty(StockString01))
-                    stocko01 = Integer.parseInt(StockString01);
+                    stockOrigin01 = Integer.parseInt(StockString01);
 
                 String StockByString01 = mByEditText.getText().toString().trim();
-                int stockby01 = 0;
+                int stockChangeBy01 = 0;
                 if (!TextUtils.isEmpty(StockByString01))
-                    stockby01 = Integer.parseInt(StockByString01);
+                    stockChangeBy01 = Integer.parseInt(StockByString01);
 
-                int stockf01 = stocko01 + stockby01;
-                mStockEditText.setText(Integer.toString(stockf01));
+                int stockFinal01 = stockOrigin01 + stockChangeBy01;
+                mStockEditText.setText(Integer.toString(stockFinal01));
                 break;
 
             case R.id.decrease_bu:
-                Toast.makeText(this, "-------------",
-                        Toast.LENGTH_SHORT).show();
-
                 String StockString02 = mStockEditText.getText().toString().trim();
-                int stocko02 = 0;
+                int stockOrigin02 = 0;
                 if (!TextUtils.isEmpty(StockString02))
-                    stocko02 = Integer.parseInt(StockString02);
+                    stockOrigin02 = Integer.parseInt(StockString02);
                 else
                     low_stock = true;
-
                 String StockByString02 = mByEditText.getText().toString().trim();
-                int stockby02 = 0;
+                int stockChangeBy02 = 0;
                 if (!TextUtils.isEmpty(StockByString02))
-                    stockby02 = Integer.parseInt(StockByString02);
+                    stockChangeBy02 = Integer.parseInt(StockByString02);
 
-                if (stocko02 > stockby02) {
-                    int stockf02 = stocko02 - stockby02;
-                    mStockEditText.setText(Integer.toString(stockf02));
+                if (stockOrigin02 > stockChangeBy02) {
+                    int stockFinal02 = stockOrigin02 - stockChangeBy02;
+                    mStockEditText.setText(Integer.toString(stockFinal02));
                 } else
                     low_stock = true;
-
                 break;
         }
-
     }
 
     @Override
@@ -778,7 +631,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         }).start();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -793,7 +645,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                     setProgressBar();
                     //set profile picture form gallery
                     profileImageView.setImageBitmap(selectedImage);
-
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();

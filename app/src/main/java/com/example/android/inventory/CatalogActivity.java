@@ -39,14 +39,9 @@ import com.example.android.inventory.data.ProductContract.ProductEntry;
  * Displays list of inventory that were entered and stored in the app.
  */
 
-
 public class CatalogActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-
-    /**
-     * Identifier for the product data loader
-     */
     private static final int PRODUCT_LOADER = 0;
 
     /**
@@ -84,7 +79,6 @@ public class CatalogActivity extends AppCompatActivity implements
         // Setup the item click listener
         productListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 // Create new intent to go to {@link EditorActivity}
@@ -102,7 +96,6 @@ public class CatalogActivity extends AppCompatActivity implements
 
                 // Launch the {@link EditorActivity} to display the data for the current product.
                 startActivity(intent);
-
             }
         });
 
@@ -138,7 +131,6 @@ public class CatalogActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Define a projection that specifies the columns from the table we care about.
@@ -168,5 +160,4 @@ public class CatalogActivity extends AppCompatActivity implements
         // Callback called when the data needs to be deleted
         mCursorAdapter.swapCursor(null);
     }
-
 }

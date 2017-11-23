@@ -10,8 +10,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<manifest package="com.example.android.inventory"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.example.android.inventory">
 
     <application
         android:allowBackup="true"
@@ -29,25 +29,26 @@
         </activity>
         <activity
             android:name="com.example.android.inventory.EditorActivity"
-            android:theme="@style/EditorTheme"
-            android:parentActivityName="com.example.android.inventory.CatalogActivity" >
+            android:parentActivityName="com.example.android.inventory.CatalogActivity"
+            android:theme="@style/EditorTheme">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.android.inventory.CatalogActivity" />
+                android:value="com.example.android.inventory.CatalogActivity"/>
         </activity>
+
         <provider
             android:name="com.example.android.inventory.data.ProductProvider"
             android:authorities="com.example.android.inventory"
-            android:exported="false" />
+            android:exported="false"/>
     </application>
 
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
+
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-
 
 </manifest>

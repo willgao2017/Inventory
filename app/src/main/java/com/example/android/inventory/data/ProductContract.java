@@ -26,7 +26,8 @@ public final class ProductContract {
 
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
-    private ProductContract() {}
+    private ProductContract() {
+    }
 
     /**
      * The "Content authority" is a name for the entire content provider, similar to the
@@ -56,7 +57,9 @@ public final class ProductContract {
      */
     public static final class ProductEntry implements BaseColumns {
 
-        /** The content URI to access the product data in the provider */
+        /**
+         * The content URI to access the product data in the provider
+         */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_PRODUCTS);
 
         /**
@@ -71,32 +74,23 @@ public final class ProductContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PRODUCTS;
 
-        /** Name of database table for inventory */
+        /**
+         * Name of database table for inventory
+         */
         public final static String TABLE_NAME = "inventory";
 
         /**
          * Unique ID number for the product (only for use in the database table).
-         *
+         * <p>
          * Type: INTEGER
          */
         public final static String _ID = BaseColumns._ID;
-
-        /**
-         * Name of the product.
-         *
-         * Type: TEXT
-         */
-        public final static String COLUMN_PRODUCT_NAME ="name";
+        public final static String COLUMN_PRODUCT_NAME = "name";
         public final static String COLUMN_PRODUCT_PROVIDER = "provider";
-        //public final static String COLUMN_PRODUCT_CAL = "modification";
         public final static String COLUMN_STOCK = "stock";
         public final static String COLUMN_PRICE = "price";
-        public static final int QUANTITY_INCREASE = 0;
-        public static final int QUANTITY_DECREASE = 1;
         public final static String COLUMN_PRODUCT_PIC = "pic";
-
     }
-
 }
 
 

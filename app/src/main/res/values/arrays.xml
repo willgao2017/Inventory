@@ -16,7 +16,6 @@
         <item>@string/cal_add</item>
     </string-array>
 
-
     <string-array name="uploadImages">
         <item>Pick from gallery</item>
         <item>Click from camera</item>
@@ -28,6 +27,4 @@
         <item>camera_image</item>
         <item>remove_image</item>
     </string-array>
-
-
 </resources>

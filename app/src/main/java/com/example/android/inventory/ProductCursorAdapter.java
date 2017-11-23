@@ -101,19 +101,18 @@ public class ProductCursorAdapter extends CursorAdapter {
         if (TextUtils.isEmpty(productPrice)) {
             productPrice = context.getString(R.string.unknown_price);
             priceTextView.setText(productPrice);
-        }else
+        } else
             priceTextView.setText(productPrice + " USD");
 
         mSale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                int stockx = stock;
-                if (stockx > 0) {
-                    stockx--;
+                int stockTemp = stock;
+                if (stockTemp > 0) {
+                    stockTemp--;
                     int itemIdx = itemId;
                     ContentValues values = new ContentValues();
-                    values.put(ProductEntry.COLUMN_STOCK, stockx);
+                    values.put(ProductEntry.COLUMN_STOCK, stockTemp);
                     Context contextX = context;
                     int rowsAffected = contextX.getContentResolver().update(ContentUris.withAppendedId(ProductEntry.CONTENT_URI, itemIdx), values, null, null);
                 }

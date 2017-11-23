@@ -150,8 +150,8 @@ public class ProductProvider extends ContentProvider {
      * for that specific row in the database.
      */
     private Uri insertProduct(Uri uri, ContentValues values) {
-        // Check that the name is not null
 
+        // Check that the name is not null
         String name = values.getAsString(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
         if (name == null) {
             throw new IllegalArgumentException("Product requires a valid name");
@@ -162,26 +162,9 @@ public class ProductProvider extends ContentProvider {
             throw new IllegalArgumentException("Product provider requires a name");
         }
 
-        /*
-        String value = values.getAsString(ProductEntry.COLUMN_PRICE);
-        if (value == null)
-            throw new IllegalArgumentException("Product requires a valid stock");
-        else if (value == " ") {
-            Log.e(LOG_TAG, "here!!!!!!!!! " + uri);
-            throw new IllegalArgumentException("Product requires a valid stock");
-        }
-        else{
-
-            float valuex = Float.parseFloat(value);
-            if (valuex < 0)
-                throw new IllegalArgumentException("Product requires a valid stock");
-        }
-        */
-
         Float value = values.getAsFloat(ProductEntry.COLUMN_PRICE);
         if (value != null && value < 0)
             throw new IllegalArgumentException("Product requires a valid price");
-
 
         Integer stock = values.getAsInteger(ProductEntry.COLUMN_STOCK);
         if (stock != null && stock < 0) {
@@ -236,20 +219,8 @@ public class ProductProvider extends ContentProvider {
      * Return the number of rows that were successfully updated.
      */
     private int updateProduct(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        // If the {@link ProductEntry#COLUMN_PRODUCT_NAME} key is present,
-        // check that the name value is not null.
 
-      /*
-        if (values.containsKey(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME)) {
-            String name = values.getAsString(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
-            if (name == null) {
-                throw new IllegalArgumentException("Product requires a name");
-            }
-        }
-        */
-
-
-        if (values.containsKey(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME)) {
+         if (values.containsKey(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME)) {
             String name = values.getAsString(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
             if (name == null) {
                 throw new IllegalArgumentException("Product requires a name");
