@@ -31,13 +31,19 @@ import com.example.android.inventory.data.ProductContract.ProductEntry;
  */
 public class ProductProvider extends ContentProvider {
 
-    /** Tag for the log messages */
+    /**
+     * Tag for the log messages
+     */
     public static final String LOG_TAG = ProductProvider.class.getSimpleName();
 
-    /** URI matcher code for the content URI for the inventory table */
+    /**
+     * URI matcher code for the content URI for the inventory table
+     */
     private static final int PRODUCTS = 100;
 
-    /** URI matcher code for the content URI for a single product in the inventory table */
+    /**
+     * URI matcher code for the content URI for a single product in the inventory table
+     */
     private static final int PRODUCT_ID = 101;
 
     /**
@@ -68,7 +74,9 @@ public class ProductProvider extends ContentProvider {
         sUriMatcher.addURI(ProductContract.CONTENT_AUTHORITY, ProductContract.PATH_PRODUCTS + "/#", PRODUCT_ID);
     }
 
-    /** Database helper object */
+    /**
+     * Database helper object
+     */
     private ProductDbHelper mDbHelper;
 
     @Override
@@ -106,7 +114,7 @@ public class ProductProvider extends ContentProvider {
                 // arguments that will fill in the "?". Since we have 1 question mark in the
                 // selection, we have 1 String in the selection arguments' String array.
                 selection = ProductContract.ProductEntry._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 
                 // This will perform a query on the inventory table where the _id equals 3 to return a
                 // Cursor containing that row of the table.
@@ -143,22 +151,46 @@ public class ProductProvider extends ContentProvider {
      */
     private Uri insertProduct(Uri uri, ContentValues values) {
         // Check that the name is not null
+
         String name = values.getAsString(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
-        String provider = values.getAsString(ProductEntry.COLUMN_PRODUCT_PROVIDER);
-
-        try {
-            if (name == null) {
-                throw new IllegalArgumentException("Product requires a name");
-            }
-
-            if (provider == null) {
-                throw new IllegalArgumentException("Product provider requires a name");
-            }
+        if (name == null) {
+            throw new IllegalArgumentException("Product requires a valid name");
         }
 
-        catch (IllegalArgumentException e){
-            Log.e(LOG_TAG, "Insert error");
-            return null;
+        String provider = values.getAsString(ProductEntry.COLUMN_PRODUCT_PROVIDER);
+        if (provider == null) {
+            throw new IllegalArgumentException("Product provider requires a name");
+        }
+
+        /*
+        String value = values.getAsString(ProductEntry.COLUMN_PRICE);
+        if (value == null)
+            throw new IllegalArgumentException("Product requires a valid stock");
+        else if (value == " ") {
+            Log.e(LOG_TAG, "here!!!!!!!!! " + uri);
+            throw new IllegalArgumentException("Product requires a valid stock");
+        }
+        else{
+
+            float valuex = Float.parseFloat(value);
+            if (valuex < 0)
+                throw new IllegalArgumentException("Product requires a valid stock");
+        }
+        */
+
+        Float value = values.getAsFloat(ProductEntry.COLUMN_PRICE);
+        if (value != null && value < 0)
+            throw new IllegalArgumentException("Product requires a valid price");
+
+
+        Integer stock = values.getAsInteger(ProductEntry.COLUMN_STOCK);
+        if (stock != null && stock < 0) {
+            throw new IllegalArgumentException("Product requires a valid stock");
+        }
+
+        byte[] pic = values.getAsByteArray(ProductEntry.COLUMN_PRODUCT_PIC);
+        if (pic == null) {
+            throw new IllegalArgumentException("Product requires a valid picture");
         }
 
         // Get writeable database
@@ -191,7 +223,7 @@ public class ProductProvider extends ContentProvider {
                 // so we know which row to update. Selection will be "_id=?" and selection
                 // arguments will be a String array containing the actual ID.
                 selection = ProductContract.ProductEntry._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 return updateProduct(uri, contentValues, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
@@ -206,10 +238,48 @@ public class ProductProvider extends ContentProvider {
     private int updateProduct(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // If the {@link ProductEntry#COLUMN_PRODUCT_NAME} key is present,
         // check that the name value is not null.
+
+      /*
         if (values.containsKey(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME)) {
             String name = values.getAsString(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
             if (name == null) {
                 throw new IllegalArgumentException("Product requires a name");
+            }
+        }
+        */
+
+
+        if (values.containsKey(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME)) {
+            String name = values.getAsString(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Product requires a name");
+            }
+        }
+
+        if (values.containsKey(ProductContract.ProductEntry.COLUMN_PRODUCT_PROVIDER)) {
+            String provider = values.getAsString(ProductEntry.COLUMN_PRODUCT_PROVIDER);
+            if (provider == null) {
+                throw new IllegalArgumentException("Product provider requires a name");
+            }
+        }
+
+        if (values.containsKey(ProductContract.ProductEntry.COLUMN_PRICE)) {
+            Float value = values.getAsFloat(ProductEntry.COLUMN_PRICE);
+            if (value != null && value < 0)
+                throw new IllegalArgumentException("Product requires a valid price");
+        }
+
+        if (values.containsKey(ProductContract.ProductEntry.COLUMN_STOCK)) {
+            Integer stock = values.getAsInteger(ProductEntry.COLUMN_STOCK);
+            if (stock != null && stock < 0) {
+                throw new IllegalArgumentException("Product requires a valid stock");
+            }
+        }
+
+        if (values.containsKey(ProductEntry.COLUMN_PRODUCT_PIC)) {
+            byte[] pic = values.getAsByteArray(ProductEntry.COLUMN_PRODUCT_PIC);
+            if (pic == null) {
+                throw new IllegalArgumentException("Product requires a valid picture");
             }
         }
 
@@ -251,7 +321,7 @@ public class ProductProvider extends ContentProvider {
             case PRODUCT_ID:
                 // Delete a single row given by the ID in the URI
                 selection = ProductContract.ProductEntry._ID + "=?";
-                selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsDeleted = database.delete(ProductContract.ProductEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:

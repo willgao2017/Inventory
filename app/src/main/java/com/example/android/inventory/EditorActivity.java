@@ -19,7 +19,9 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,12 +43,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,8 +56,6 @@ import com.example.android.inventory.data.ProductContract.ProductEntry;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import static com.example.android.inventory.data.ProductContract.ProductEntry.QUANTITY_DECREASE;
 
 /**
  * Allows user to create a new product or edit an existing one.
@@ -90,23 +87,22 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      */
     private EditText mByEditText;
 
-    private TextView mStockText;
+    private EditText mStockEditText;
 
     private TextView mPriceEditText;
-
-    /**
-     * EditText field to enter the product stock's changing direction
-     */
-    private Spinner mCalSpinner;
 
     private int mCal;
 
     private Button mOrderMore;
+    private Button mInc;
+    private Button mDec;
 
     /**
      * Boolean flag that keeps track of whether the product has been edited (true) or not (false)
      */
     private boolean mProductHasChanged = false;
+
+    Boolean low_stock = false;
 
 
     private ImageView profileImageView;
@@ -162,9 +158,14 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mNameEditText = (EditText) findViewById(R.id.edit_product_name);
         mProviderEditText = (EditText) findViewById(R.id.edit_product_provider);
         mByEditText = (EditText) findViewById(R.id.edit_mod_by);
-        mCalSpinner = (Spinner) findViewById(R.id.spinner_cal);
+        mInc = (Button) findViewById(R.id.increase_bu);
+        mInc.setOnClickListener(this);
+
+        mDec = (Button) findViewById(R.id.decrease_bu);
+        mDec.setOnClickListener(this);
+
         mPriceEditText = (EditText) findViewById(R.id.edit_product_price);
-        mStockText = (TextView) findViewById(R.id.quantity_remains);
+        mStockEditText = (EditText) findViewById(R.id.quantity_remains);
         mOrderMore = (Button) findViewById(R.id.order_more);
         mOrderMore.setOnClickListener(this);
 
@@ -174,9 +175,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mNameEditText.setOnTouchListener(mTouchListener);
         mProviderEditText.setOnTouchListener(mTouchListener);
         mByEditText.setOnTouchListener(mTouchListener);
-        mCalSpinner.setOnTouchListener(mTouchListener);
+        // // //mCalSpinner.setOnTouchListener(mTouchListener);
 
-        setupSpinner();
+        // // // setupSpinner();
 
         profileImageView = (ImageView) findViewById(R.id.profileImageView);
 
@@ -190,9 +191,13 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         }
     }
 
+
     /**
      * Setup the dropdown spinner that allows the user to select the changing direction the stock.
      */
+
+        /*
+
     private void setupSpinner() {
         // Create adapter for spinner. The list options are from the String array it will use
         // the spinner will use the default layout
@@ -227,6 +232,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         });
     }
 
+    */
+
     /**
      * Get user input from editor and save product into database.
      */
@@ -235,28 +242,28 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
         String providerString = mProviderEditText.getText().toString().trim();
-        String StockString = mStockText.getText().toString().trim();
+        String StockString = mStockEditText.getText().toString().trim();
         String priceString = mPriceEditText.getText().toString().trim();
-        String ByString = mByEditText.getText().toString().trim();
+        //String ByString = mByEditText.getText().toString().trim();
 
 
         // Check if this is supposed to be a new product
         // and check if all the fields in the editor are blank
-        if (mCurrentProductUri == null &&  TextUtils.isEmpty(nameString)) {
+        if (mCurrentProductUri == null && TextUtils.isEmpty(nameString)) {
             // No name and we can return early without creating a new product.
             Toast.makeText(this, "Name is required for a new product",
                     Toast.LENGTH_SHORT).show();
             return;
         }
-
         // Create a ContentValues object where column names are the keys,
         // and product attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(ProductEntry.COLUMN_PRODUCT_NAME, nameString);
-        values.put(ProductContract.ProductEntry.COLUMN_PRODUCT_PROVIDER, providerString);
-        values.put(ProductEntry.COLUMN_PRODUCT_CAL, mCal);
-        values.put(ProductContract.ProductEntry.COLUMN_PRICE, priceString);
+        values.put(ProductEntry.COLUMN_PRODUCT_PROVIDER, providerString);
+        //values.put(ProductEntry.COLUMN_PRODUCT_CAL, mCal);
+        values.put(ProductEntry.COLUMN_PRICE, priceString);
 
+/*
         int stock = 0;
         Boolean low_stock = false;
         if (!TextUtils.isEmpty(StockString)) {
@@ -280,7 +287,44 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                 else
                     low_stock = true;
         }
-        values.put(ProductContract.ProductEntry.COLUMN_STOCK, stock);
+        */
+
+        int stock = 0;
+        if (!TextUtils.isEmpty(StockString)) {
+            stock = Integer.parseInt(StockString);
+        }
+        values.put(ProductEntry.COLUMN_STOCK, stock);
+
+
+/*
+        int stock = Integer.parseInt(StockString);
+        Boolean low_stock = false;
+
+
+        if (!TextUtils.isEmpty(StockString)) {
+            if (!TextUtils.isEmpty(ByString)) {
+                if (mCal == 0)
+                    stock = Integer.parseInt(StockString) + Integer.parseInt(ByString);
+                else {
+                    if (Integer.parseInt(StockString) >= Integer.parseInt(ByString))
+                        stock = Integer.parseInt(StockString) - Integer.parseInt(ByString);
+                    else {
+                        low_stock = true;
+                        stock = Integer.parseInt(StockString);
+                    }
+                }
+            } else
+                stock = Integer.parseInt(StockString);
+        } else {
+            if (!TextUtils.isEmpty(ByString))
+                if (mCal == 0)
+                    stock = Integer.parseInt(ByString);
+                else
+                    low_stock = true;
+        }
+        values.put(ProductEntry.COLUMN_STOCK, Integer.parseInt(StockString));
+
+        */
 
 
         profileImageView.setDrawingCacheEnabled(true);
@@ -431,10 +475,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // Since the editor shows all product attributes, define a projection that contains
         // all columns from the product table
         String[] projection = {
-                ProductContract.ProductEntry._ID,
+                ProductEntry._ID,
                 ProductEntry.COLUMN_PRODUCT_NAME,
                 ProductEntry.COLUMN_PRODUCT_PROVIDER,
-                ProductEntry.COLUMN_PRODUCT_CAL,
+                //ProductEntry.COLUMN_PRODUCT_CAL,
                 ProductEntry.COLUMN_PRICE,
                 ProductEntry.COLUMN_STOCK,
                 ProductEntry.COLUMN_PRODUCT_PIC};
@@ -461,7 +505,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Find the columns of product attributes that we're interested in
             int nameColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_NAME);
             int providerColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_PRODUCT_PROVIDER);
-            int calColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_CAL);
+            //int calColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_CAL);
             int stockColumnIndex = cursor.getColumnIndex(ProductEntry.COLUMN_STOCK);
             int priceColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRICE);
             int picColumnIndex = cursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRODUCT_PIC);
@@ -470,7 +514,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString(nameColumnIndex);
             String provider = cursor.getString(providerColumnIndex);
-            int cal = cursor.getInt(calColumnIndex);
+            //int cal = cursor.getInt(calColumnIndex);
             int stock = cursor.getInt(stockColumnIndex);
             float price = cursor.getFloat(priceColumnIndex);
             byte[] image = cursor.getBlob(picColumnIndex);
@@ -482,9 +526,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Update the views on the screen with the values from the database
             mNameEditText.setText(name);
             mProviderEditText.setText(provider);
-            mStockText.setText(Integer.toString(stock));
+            mStockEditText.setText(Integer.toString(stock));
             mPriceEditText.setText(Float.toString(price));
 
+            /*
             switch (cal) {
                 case QUANTITY_DECREASE:
                     mCalSpinner.setSelection(1);
@@ -493,6 +538,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                     mCalSpinner.setSelection(0);
                     break;
             }
+            */
         }
     }
 
@@ -501,8 +547,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         // If the loader is invalidated, clear out all the data from the input fields.
         mNameEditText.setText("");
         mProviderEditText.setText("");
-        mStockText.setText("");
-        mCalSpinner.setSelection(0);
+        mStockEditText.setText("");
+
+        //mCalSpinner.setSelection(0);
     }
 
     /**
@@ -596,6 +643,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         switch (view.getId()) {
 
             case R.id.profileImageView:
+                Toast.makeText(this, "picpicpicpicpicpicpicpicpicpic",
+                        Toast.LENGTH_SHORT).show();
                 new MaterialDialog.Builder(this)
                         .title(R.string.uploadImages)
                         .items(R.array.uploadImages)
@@ -622,16 +671,60 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                         .show();
                 break;
 
-            case R.id.order_more: {
+            case R.id.order_more:
+                Toast.makeText(this, "??????????????????",
+                        Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Udacity shop needs more of your products");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Udacity shop needs more of your " + mNameEditText.getText().toString().trim());
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
-            }
+                break;
 
+            case R.id.increase_bu:
+                Toast.makeText(this, "++++++++++++++++",
+                        Toast.LENGTH_SHORT).show();
+                String StockString01 = mStockEditText.getText().toString().trim();
+                int stocko01 = 0;
+                if (!TextUtils.isEmpty(StockString01))
+                    stocko01 = Integer.parseInt(StockString01);
+
+                String StockByString01 = mByEditText.getText().toString().trim();
+                int stockby01 = 0;
+                if (!TextUtils.isEmpty(StockByString01))
+                    stockby01 = Integer.parseInt(StockByString01);
+
+                int stockf01 = stocko01 + stockby01;
+                mStockEditText.setText(Integer.toString(stockf01));
+                break;
+
+            case R.id.decrease_bu:
+                Toast.makeText(this, "-------------",
+                        Toast.LENGTH_SHORT).show();
+
+                String StockString02 = mStockEditText.getText().toString().trim();
+                int stocko02 = 0;
+                if (!TextUtils.isEmpty(StockString02))
+                    stocko02 = Integer.parseInt(StockString02);
+                else
+                    low_stock = true;
+
+                String StockByString02 = mByEditText.getText().toString().trim();
+                int stockby02 = 0;
+                if (!TextUtils.isEmpty(StockByString02))
+                    stockby02 = Integer.parseInt(StockByString02);
+
+                if (stocko02 > stockby02) {
+                    int stockf02 = stocko02 - stockby02;
+                    mStockEditText.setText(Integer.toString(stockf02));
+                } else
+                    low_stock = true;
+
+                break;
         }
+
     }
 
     @Override

@@ -88,7 +88,7 @@ public final class ProductContract {
          */
         public final static String COLUMN_PRODUCT_NAME ="name";
         public final static String COLUMN_PRODUCT_PROVIDER = "provider";
-        public final static String COLUMN_PRODUCT_CAL = "modification";
+        //public final static String COLUMN_PRODUCT_CAL = "modification";
         public final static String COLUMN_STOCK = "stock";
         public final static String COLUMN_PRICE = "price";
         public static final int QUANTITY_INCREASE = 0;
