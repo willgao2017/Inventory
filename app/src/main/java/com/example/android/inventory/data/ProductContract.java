@@ -84,7 +84,6 @@ public final class ProductContract {
          * <p>
          * Type: INTEGER
          */
-        public final static String _ID = BaseColumns._ID;
         public final static String COLUMN_PRODUCT_NAME = "name";
         public final static String COLUMN_PRODUCT_PROVIDER = "provider";
         public final static String COLUMN_STOCK = "stock";

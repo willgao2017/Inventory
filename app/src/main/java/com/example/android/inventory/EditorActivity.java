@@ -96,8 +96,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
      */
     private boolean mProductHasChanged = false;
 
-    Boolean low_stock = false;
-
     private ImageView profileImageView;
     private static final int SELECT_PHOTO = 1;
     private static final int CAPTURE_PHOTO = 2;
@@ -183,7 +181,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     /**
      * Get user input from editor and save product into database.
      */
-    private void saveProduct() {
+    private boolean saveProduct() {
         // Read from input fields
         // Use trim to eliminate leading or trailing white space
         String nameString = mNameEditText.getText().toString().trim();
@@ -193,12 +191,41 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         // Check if this is supposed to be a new product
         // and check if all the fields in the editor are blank
-        if (mCurrentProductUri == null && TextUtils.isEmpty(nameString)) {
+        if (TextUtils.isEmpty(nameString)) {
             // No name and we can return early without creating a new product.
-            Toast.makeText(this, "Name is required for a new product",
+            Toast.makeText(this, "Name is required for the product",
                     Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
+
+        if (TextUtils.isEmpty(providerString)) {
+            // No name and we can return early without creating a new product.
+            Toast.makeText(this, "Provider name is required for the product",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(priceString)) {
+            // No name and we can return early without creating a new product.
+            Toast.makeText(this, "Price is required for the product",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (TextUtils.isEmpty(StockString)) {
+            // No name and we can return early without creating a new product.
+            Toast.makeText(this, "Stock is required for the product",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (profileImageView.getDrawable() == null) {
+            // No name and we can return early without creating a new product.
+            Toast.makeText(this, "Pic is required for the product",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         // Create a ContentValues object where column names are the keys,
         // and product attributes from the editor are the values.
         ContentValues values = new ContentValues();
@@ -206,10 +233,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         values.put(ProductEntry.COLUMN_PRODUCT_PROVIDER, providerString);
         values.put(ProductEntry.COLUMN_PRICE, priceString);
 
-        int stock = 0;
-        if (!TextUtils.isEmpty(StockString)) {
-            stock = Integer.parseInt(StockString);
-        }
+        int stock = Integer.parseInt(StockString);
         values.put(ProductEntry.COLUMN_STOCK, stock);
 
         profileImageView.setDrawingCacheEnabled(true);
@@ -233,11 +257,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the insertion was successful and we can display a toast.
-                if (!low_stock)
-                    Toast.makeText(this, getString(R.string.editor_insert_product_successful),
-                            Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(this, "not so many in stock", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.editor_insert_product_successful),
+                        Toast.LENGTH_SHORT).show();
             }
         } else {
             // Otherwise this is an EXISTING product, so update the product with content URI: mCurrentProductUri
@@ -253,12 +274,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the update was successful and we can display a toast.
-                if (!low_stock)
-                    Toast.makeText(this, getString(R.string.editor_update_product_successful), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(this, "not so many in stock", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.editor_update_product_successful), Toast.LENGTH_SHORT).show();
             }
         }
+        return true;
     }
 
     @Override
@@ -291,9 +310,11 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Save product to database
-                saveProduct();
+                Boolean saveFinished;
+                saveFinished = saveProduct();
                 // Exit activity
-                finish();
+                if (saveFinished)
+                    finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
@@ -504,7 +525,6 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         finish();
     }
 
-
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
@@ -527,7 +547,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
                                         startActivityForResult(intent, CAPTURE_PHOTO);
                                         break;
                                     case 2:
-                                        profileImageView.setImageResource(R.drawable.ic_add_pic);
+                                        profileImageView.setImageResource(0);
                                         break;
                                 }
                             }
@@ -546,9 +566,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
             case R.id.increase_bu:
                 String StockString01 = mStockEditText.getText().toString().trim();
-                int stockOrigin01 = 0;
-                if (!TextUtils.isEmpty(StockString01))
-                    stockOrigin01 = Integer.parseInt(StockString01);
+                int stockOrigin01 = Integer.parseInt(StockString01);
 
                 String StockByString01 = mByEditText.getText().toString().trim();
                 int stockChangeBy01 = 0;
@@ -561,21 +579,18 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
             case R.id.decrease_bu:
                 String StockString02 = mStockEditText.getText().toString().trim();
-                int stockOrigin02 = 0;
-                if (!TextUtils.isEmpty(StockString02))
-                    stockOrigin02 = Integer.parseInt(StockString02);
-                else
-                    low_stock = true;
+                int stockOrigin02 = Integer.parseInt(StockString02);
+
                 String StockByString02 = mByEditText.getText().toString().trim();
                 int stockChangeBy02 = 0;
                 if (!TextUtils.isEmpty(StockByString02))
                     stockChangeBy02 = Integer.parseInt(StockByString02);
 
-                if (stockOrigin02 > stockChangeBy02) {
+                if (stockOrigin02 >= stockChangeBy02) {
                     int stockFinal02 = stockOrigin02 - stockChangeBy02;
                     mStockEditText.setText(Integer.toString(stockFinal02));
                 } else
-                    low_stock = true;
+                    Toast.makeText(this, "Not so many in stock", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

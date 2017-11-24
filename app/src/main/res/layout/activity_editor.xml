@@ -24,11 +24,18 @@
     <ImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profileImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_gravity="center"
-        android:src="@drawable/ic_add_pic"
+        android:background="#A9A9A9"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Please click the above square to add/modify the product picture"
+        android:layout_margin="5dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,7 +67,6 @@
                 style="@style/EditorFieldStyle"
                 android:hint="@string/hint_product_provider"
                 android:inputType="textCapWords"/>
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
